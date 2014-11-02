@@ -1,0 +1,38 @@
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+# scale of knowledge
+library(ggplot2)
+library(scales)     
+library(reshape2)
+library(RCurl)
+
+tt = getForm("https://spreadsheets.google.com/feeds/download/spreadsheets/Export", 
+             key = "1lqwowwtudcyxZ5qleEFT_UWysAhIR1WIqMQ-UGITXSQ", 
+             single = "true", 
+             exportFormat = "csv", 
+             .opts = list(followlocation = TRUE, verbose = TRUE))
+d=read.csv(textConnection(tt)) 
+```  
+
+
+
+# Data, models, and processes
+
+Data pulled from [here](https://docs.google.com/spreadsheets/d/1lqwowwtudcyxZ5qleEFT_UWysAhIR1WIqMQ-UGITXSQ/edit?usp=sharing).
+
+```{r,echo=FALSE}
+ggplot(d,
+       aes(ymin=space_extent_min,ymax=space_extent_max,
+           xmin=time_extent_min,xmax=time_extent_max,fill=name))+
+  facet_grid(class~.)+
+  geom_rect(alpha=.5)+
+#  coord_equal()+
+  xlab("Time (years)")+ylab("Space (km)")+
+  scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x)))+
+  scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x)))
+```
+
+
+
+
